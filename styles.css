@@ -1,0 +1,30 @@
+
+:root{
+  --bg:#0b0f18; --fg:#e8eefc; --muted:#9fb3d9; --card:#121829; --accent:#0b6cf0; --danger:#f04d4d;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Apple SD Gothic Neo, Noto Sans KR, sans-serif;
+  background:var(--bg); color:var(--fg);
+}
+header{padding:24px 16px 0}
+h1{margin:0 0 6px 0; font-size:24px}
+.subtitle{margin:0; color:var(--muted)}
+main{padding:16px; display:grid; gap:16px; max-width:720px; margin:0 auto}
+.card{background:var(--card); border:1px solid #1f2942; border-radius:12px; padding:16px}
+.row{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px}
+.label{color:var(--muted); font-size:14px}
+.value{font-weight:700; font-size:20px}
+#wordInput{
+  flex:1; padding:12px 14px; border-radius:10px; border:1px solid #2a3557; background:#0e1425; color:var(--fg);
+}
+button{
+  border:none; background:var(--accent); color:white; padding:12px 14px; border-radius:10px; font-weight:700;
+}
+button.ghost{background:transparent; color:var(--muted); border:1px solid #2a3557}
+button:active{transform:translateY(1px)}
+.message{margin-top:6px; color:var(--muted)}
+.log{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; max-height:40vh; overflow:auto}
+.log li{background:#0d1324; border:1px solid #1e2641; border-radius:10px; padding:10px 12px}
+footer{padding:24px 16px; text-align:center; color:var(--muted)}

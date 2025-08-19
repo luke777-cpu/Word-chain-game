@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>끝말잇기 Word Chain</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0b6cf0"/>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>끝말잇기 Word Chain</h1>
+    <p class="subtitle">홈 화면에 추가하면 앱처럼 사용할 수 있어요.</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row">
+        <div>
+          <div class="label">마지막 단어</div>
+          <div id="lastWord" class="value">시작</div>
+        </div>
+        <button id="resetBtn" class="ghost">초기화</button>
+      </div>
+
+      <div class="row">
+        <input id="wordInput" type="text" placeholder="다음 단어 입력" autocomplete="off" />
+        <button id="submitBtn">제출</button>
+      </div>
+
+      <div id="message" class="message">단어를 입력해 보세요.</div>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <div class="label">게임 로그</div>
+        <button id="clearLogBtn" class="ghost">지우기</button>
+      </div>
+      <ul id="log" class="log"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <small>Powered by Pyodide • 오프라인 사용 가능 (PWA)</small>
+  </footer>
+
+  <script>
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+      });
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
