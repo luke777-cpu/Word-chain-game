@@ -1,25 +1,14 @@
+# 끝말잇기 Pro (Word-Chain Pro)
+AI vs 사람 / 사람 vs 사람 — 점수/타이머/패스/힌트/대용량 사전.
 
-# 끝말잇기 PWA (Pyodide)
+## 기능
+- 난이도(쉬움/보통/어려움)
+- 점수제: 유효 단어 1점, 목표 점수 먼저 달성 시 승리
+- 턴 제한(0=무제한), 시간초과 자동 패스
+- 패스 횟수 설정
+- 힌트(가능 단어 수)
+- 옵션: 고유명사 허용, 최소 글자수, 금지 끝 글자(쉼표로 입력)
+- 사전: 파일 업로드 / URL 로드 / localStorage 저장
 
-이 폴더를 그대로 GitHub Pages/Netlify 등에 올리면 아이폰/안드로이드에서 홈 화면에 추가해 '설치형'처럼 사용할 수 있습니다.
-
-## 파일 설명
-- `index.html` : 메인 페이지
-- `styles.css` : 스타일
-- `app.js` : UI + Pyodide 초기화 + 게임 로직 연동
-- `manifest.json` : PWA 메타데이터
-- `service-worker.js` : 오프라인 캐시
-- `kkunmal_wordchain.py` : (선택) 형의 파이썬 로직. 동일 경로에 두면 자동으로 로드됩니다.
-- `icons/` : 앱 아이콘
-
-## 사용 방법
-1. 이 폴더를 통째로 웹에 호스팅 (GitHub Pages 권장).
-2. iPhone Safari 또는 Android Chrome으로 접속.
-3. 공유 버튼 → **홈 화면에 추가**.
-4. 앱 아이콘이 생기고 전체화면으로 실행됩니다.
-
-## 주의
-- Pyodide는 CDN에서 불러오므로 첫 로딩이 다소 느릴 수 있습니다.
-- `kkunmal_wordchain.py`에서 `is_valid_move(prev, curr)` 함수가 있으면 그걸 사용합니다.
-  - 없다면 기본 규칙(이전 단어 마지막 글자 = 다음 단어 첫 글자)을 사용합니다.
-- 오프라인 완전 지원을 원하면 Pyodide 파일을 로컬에 포함하고 service worker 캐시에 추가하세요 (용량 ↑).
+## 배포
+GitHub Pages에서 저장소 루트(`/`)로 서빙하면 됩니다.

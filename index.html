@@ -1,59 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>끝말잇기 Word Chain</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0b6cf0"/>
-  <link rel="stylesheet" href="styles.css" />
+  <title>끝말잇기 Pro — AI vs 사람 / 사람 vs 사람</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>끝말잇기 Word Chain</h1>
-    <p class="subtitle">홈 화면에 추가하면 앱처럼 사용할 수 있어요.</p>
-  </header>
+  <div class="app">
+    <header class="topbar">
+      <h1>끝말잇기 <span class="badge">Pro</span></h1>
+      <div class="right">
+        <a class="ghost" href="README.md" target="_blank" rel="noopener">도움말</a>
+      </div>
+    </header>
 
-  <main>
-    <section class="card">
-      <div class="row">
-        <div>
-          <div class="label">마지막 단어</div>
-          <div id="lastWord" class="value">시작</div>
-        </div>
+    <section class="panel controls">
+      <div class="row wrap">
+        <label class="mode">
+          <input type="radio" name="mode" value="ai" checked />
+          <span>AI vs 사람</span>
+        </label>
+        <label class="mode">
+          <input type="radio" name="mode" value="pvp" />
+          <span>사람 vs 사람</span>
+        </label>
+
+        <div class="vline"></div>
+
+        <label>난이도
+          <select id="difficulty">
+            <option value="easy">쉬움</option>
+            <option value="normal" selected>보통</option>
+            <option value="hard">어려움</option>
+          </select>
+        </label>
+
+        <label>턴 제한(초)
+          <input type="number" id="turnSeconds" min="0" max="120" value="20" />
+        </label>
+
+        <label>승점(포인트)
+          <input type="number" id="pointsToWin" min="1" max="50" value="15" />
+        </label>
+
+        <label>패스 횟수
+          <input type="number" id="maxPass" min="0" max="10" value="1" />
+        </label>
+
+        <button id="startBtn" class="primary">게임 시작</button>
         <button id="resetBtn" class="ghost">초기화</button>
       </div>
-
-      <div class="row">
-        <input id="wordInput" type="text" placeholder="다음 단어 입력" autocomplete="off" />
-        <button id="submitBtn">제출</button>
-      </div>
-
-      <div id="message" class="message">단어를 입력해 보세요.</div>
     </section>
 
-    <section class="card">
-      <div class="row">
-        <div class="label">게임 로그</div>
-        <button id="clearLogBtn" class="ghost">지우기</button>
+    <section class="panel game-info">
+      <div class="row wrap">
+        <div class="block">
+          <h3>사전</h3>
+          <p id="dictStatus">로딩된 단어: 0</p>
+          <div class="row gap">
+            <input type="file" id="dictFile" accept=".txt,.json" />
+            <button id="loadFileBtn">파일 불러오기</button>
+          </div>
+          <div class="row gap">
+            <input type="text" id="dictUrl" placeholder="사전 URL 또는 경로 (예: dictionary/ko_words.txt)" />
+            <button id="loadUrlBtn">URL 로드</button>
+          </div>
+          <div class="row gap">
+            <button id="saveDictBtn">사전 저장</button>
+            <button id="clearSavedDictBtn">저장 삭제</button>
+          </div>
+          <p class="hint">대용량 사전은 UTF-8, 한 줄에 한 단어 권장. 같은 리포지토리에서 호스팅하면 CORS 문제 없음.</p>
+        </div>
+
+        <div class="block">
+          <h3>규칙</h3>
+          <label class="checkbox">
+            <input type="checkbox" id="allowProperNouns" />
+            <span>고유명사 허용</span>
+          </label>
+          <label>최소 글자수
+            <input type="number" id="minLen" min="1" max="10" value="2" />
+          </label>
+          <label>금지 끝 글자(쉼표 구분)
+            <input type="text" id="bannedLastChars" placeholder="예: ㅇ,ㄱ" />
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" id="showHints" />
+            <span>힌트(가능 단어 수) 표시</span>
+          </label>
+        </div>
+
+        <div class="block stats">
+          <h3>진행</h3>
+          <p><b>현재 턴:</b> <span id="turnLabel">-</span></p>
+          <p><b>요구 시작 글자:</b> <span id="requiredChar">-</span></p>
+          <p><b>남은 시간:</b> <span id="timer">-</span>초</p>
+          <p><b>점수:</b> <span id="scoreP1">0</span> : <span id="scoreP2">0</span></p>
+          <p><b>남은 패스:</b> <span id="passLeft">-</span></p>
+          <p id="hintLine" class="hint hidden">가능 단어 수: <span id="hintCount">0</span></p>
+        </div>
       </div>
-      <ul id="log" class="log"></ul>
     </section>
-  </main>
 
-  <footer>
-    <small>Powered by Pyodide • 오프라인 사용 가능 (PWA)</small>
-  </footer>
+    <section class="panel input-area">
+      <div id="inputRow" class="row">
+        <input id="wordInput" type="text" placeholder="단어를 입력하세요 (한글)" />
+        <button id="submitBtn" class="primary">제출</button>
+        <button id="passBtn">패스</button>
+        <button id="surrenderBtn" class="danger">기권</button>
+      </div>
+      <p id="message" class="message"></p>
+    </section>
 
-  <script>
-    // Register service worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').catch(console.error);
-      });
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+    <section class="panel">
+      <h3>사용된 단어</h3>
+      <div id="usedList" class="used-list"></div>
+    </section>
+
+    <footer>
+      <p>끝말잇기 Pro — 클라이언트만으로 동작 · 대용량 사전 업로드/URL 지원</p>
+    </footer>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
