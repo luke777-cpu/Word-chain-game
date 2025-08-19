@@ -3,7 +3,7 @@
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
 
   const startBtn=$("#startBtn"), resetBtn=$("#resetBtn"), difficultySel=$("#difficulty");
-  const modeRadios=$$("input[name='mode']");
+  const modeRadios=$$("input[name='mode']);
   const turnSecondsInput=$("#turnSeconds"), pointsToWinInput=$("#pointsToWin"), maxPassInput=$("#maxPass");
 
   const dictStatus=$("#dictStatus"), dictFile=$("#dictFile"), loadFileBtn=$("#loadFileBtn");
@@ -91,6 +91,7 @@
     wordInput.disabled=false; submitBtn.disabled=false; passBtn.disabled=false;
   }
 
+  // 🔧 시간초과 → 즉시 패배 처리
   function startTimer(){
     clearInterval(timer);
     let left=Number(turnSecondsInput.value||0);
@@ -98,9 +99,14 @@
     timerEl.textContent=String(left);
     timer=setInterval(()=>{
       left--; timerEl.textContent=String(left);
-      if(left<=0){ clearInterval(timer); timer=null; showMessage("시간초과! 자동 패스 처리"); handlePass(true); }
+      if(left<=0){
+        clearInterval(timer); timer=null;
+        const loser = (turn===0) ? "플레이어 1" : (mode==="ai" ? "AI" : "플레이어 2");
+        endGame(loser);
+      }
     },1000);
   }
+
   function nextTurn(){ turn=(turn+1)%2; turnLabel.textContent=(turn===0)?"플레이어 1":(mode==="ai"?"AI":"플레이어 2"); }
   const bannedList=()=> bannedLastCharsInput.value.split(",").map(s=>s.trim()).filter(Boolean);
 
@@ -160,18 +166,13 @@
     wordInput.value=""; commitWord(w); nextTurn(); startTimer(); updateHint();
     if(mode==="ai"&&turn===1){ wordInput.disabled=true; submitBtn.disabled=true; passBtn.disabled=true; aiMove(); }
   }
-  function handlePass(fromTimeout=false){
-    if(!running) return;
-    if(!fromTimeout){ if(passesLeft<=0){ showMessage("남은 패스가 없습니다.","error"); return; } passesLeft-=1; passLeftEl.textContent=String(passesLeft); }
-    showMessage("패스!"); nextTurn(); startTimer();
-    if(mode==="ai"&&turn===1){ wordInput.disabled=true; submitBtn.disabled=true; passBtn.disabled=true; aiMove(); }
-  }
+  function handlePass(){ if(!running) return; if(passesLeft<=0){ showMessage("남은 패스가 없습니다.","error"); return; } passesLeft-=1; passLeftEl.textContent=String(passesLeft); showMessage("패스!"); nextTurn(); startTimer(); if(mode==="ai"&&turn===1){ wordInput.disabled=true; submitBtn.disabled=true; passBtn.disabled=true; aiMove(); } }
   function handleSurrender(){ if(!running) return; const loser=(turn===0)?"플레이어 1":(mode==="ai"?"AI":"플레이어 2"); endGame(loser); }
 
   startBtn.addEventListener("click", startGame);
   resetBtn.addEventListener("click", ()=>resetGame(true));
   submitBtn.addEventListener("click", handleSubmit);
-  passBtn.addEventListener("click", ()=>handlePass(false));
+  passBtn.addEventListener("click", handlePass);
   surrenderBtn.addEventListener("click", handleSurrender);
   wordInput.addEventListener("keydown", e=>{ if(e.key==="Enter") handleSubmit(); });
   showHints.addEventListener("change", updateHint);
